@@ -18,7 +18,7 @@
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
-namespace My
+namespace My::math
 {
     struct Vector2;
     struct Vector4;
@@ -980,5 +980,5 @@ namespace My
         static RECT __cdecl ComputeTitleSafeArea(UINT backBufferWidth, UINT backBufferHeight) noexcept;
     };
 
-#include "yaMath.inl"
+#include "MyMath.inl"
 }

@@ -15,7 +15,7 @@
  * Constants
  *
  ****************************************************************************/
-namespace My
+namespace My::math
 {
 	const Vector2 Vector2::Zero = { 0.f, 0.f };
 	const Vector2 Vector2::One = { 1.f, 1.f };
@@ -34,7 +34,7 @@ namespace My
 	const Vector3 Vector3::Forward = { 0.f, 0.f, 1.f };
 	const Vector3 Vector3::Backward = { 0.f, 0.f, -1.f };
 
-	const Vector4 My::Vector4::Zero = { 0.f, 0.f, 0.f, 0.f };
+	const Vector4 My::math::Vector4::Zero = { 0.f, 0.f, 0.f, 0.f };
 	const Vector4 Vector4::One = { 1.f, 1.f, 1.f, 1.f };
 	const Vector4 Vector4::UnitX = { 1.f, 0.f, 0.f, 0.f };
 	const Vector4 Vector4::UnitY = { 0.f, 1.f, 0.f, 0.f };

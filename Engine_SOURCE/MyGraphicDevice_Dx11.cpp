@@ -2,8 +2,7 @@
 #include "MyApplication.h"
 
 extern My::Application application;
-
-namespace My
+namespace My::graphics
 {
 	GraphicDevice_Dx11::GraphicDevice_Dx11()
 	{

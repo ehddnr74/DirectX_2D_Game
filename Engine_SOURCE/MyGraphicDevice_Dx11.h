@@ -7,7 +7,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-namespace My
+namespace My::graphics
 {
 	class GraphicDevice_Dx11
 	{

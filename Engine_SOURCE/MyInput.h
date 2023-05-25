@@ -3,7 +3,7 @@
 
 namespace My
 {
-	using namespace My;
+	using namespace My::math;
 	enum class eKeyCode
 	{
 		Q, W, E, R, T, Y, U, I, O, P,
