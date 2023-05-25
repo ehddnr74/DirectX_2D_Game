@@ -979,6 +979,4 @@ namespace My::math
 #endif
         static RECT __cdecl ComputeTitleSafeArea(UINT backBufferWidth, UINT backBufferHeight) noexcept;
     };
-
-#include "MyMath.inl"
 }

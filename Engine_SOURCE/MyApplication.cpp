@@ -48,7 +48,7 @@ namespace My
 			mWidth = width;
 			mHeight = height;
 
-			graphicDevice = std::make_unique<My::GraphicDevice_Dx11>();
+			graphicDevice = std::make_unique<My::graphics::GraphicDevice_Dx11>();
 		}
 
 		RECT rt = { 0, 0, (LONG)width , (LONG)height };

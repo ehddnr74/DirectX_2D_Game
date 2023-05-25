@@ -119,6 +119,8 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -152,6 +154,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyEngine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="C:\Users\USER\Desktop\Engine\DirectX_2D_Game\Engine_SOURCE\MyMath.inl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
