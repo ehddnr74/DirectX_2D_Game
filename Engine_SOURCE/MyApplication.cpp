@@ -1,4 +1,7 @@
 #include "MyApplication.h"
+#include "MyInput.h"
+#include "MyTime.h"
+#include "MyRenderer.h"
 
 
 namespace My
@@ -25,10 +28,16 @@ namespace My
 
 	void Application::Initialize()
 	{
+		Time::Initiailize();
+		Input::Initialize();
+
+		renderer::Initialize();
 	}
 
 	void Application::Update()
 	{
+		Time::Update();
+		Input::Update();
 	}
 
 	void Application::LateUpdate()
@@ -37,6 +46,8 @@ namespace My
 
 	void Application::Render()
 	{
+		Time::Render();
+
 		graphicDevice->Draw();
 	}
 
@@ -49,6 +60,7 @@ namespace My
 			mHeight = height;
 
 			graphicDevice = std::make_unique<My::graphics::GraphicDevice_Dx11>();
+			My::graphics::GetDevice() = graphicDevice.get();
 		}
 
 		RECT rt = { 0, 0, (LONG)width , (LONG)height };

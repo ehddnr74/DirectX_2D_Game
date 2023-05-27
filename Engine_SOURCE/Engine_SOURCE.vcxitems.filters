@@ -52,6 +52,9 @@
       <Filter>Resource\Resources</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)MyResource.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MyRenderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)MyApplication.h">
@@ -88,5 +91,13 @@
       <Filter>Resource\Resources</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)MyResource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyRenderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)MyMath.inl">
+      <Filter>Common\Math</Filter>
+    </None>
   </ItemGroup>
 </Project>

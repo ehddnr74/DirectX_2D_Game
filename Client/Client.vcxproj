@@ -153,6 +153,9 @@
     <None Update="C:\Users\USER\Desktop\Engine\DirectX_2D_Game\Engine_SOURCE\MyMath.inl">
       <FileType>Document</FileType>
     </None>
+    <None Update="C:\Users\이동욱\Desktop\Engine\DirectX_2D_Game\Engine_SOURCE\MyMath.inl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
