@@ -2,7 +2,7 @@
 //
 
 #include "framework.h"
-#include "Editor_Window.h"
+#include "Client.h"
 #include "MyApplication.h"
 
 My::Application application;
