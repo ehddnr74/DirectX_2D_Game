@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "Client.h"
 #include "MyApplication.h"
+#include "MyRenderer.h"
 
 My::Application application;
 
@@ -64,6 +65,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
+    renderer::Release();
     return (int)msg.wParam;
 }
 

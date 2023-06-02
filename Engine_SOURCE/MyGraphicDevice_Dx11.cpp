@@ -16,7 +16,7 @@ namespace My::graphics
 		// 3. rendertarget,view 생성하고 
 		// 4. 깊이버퍼와 깊이버퍼 뷰 생성해주고
 
-		// 5. 렌더타겟 클리어 ( 화면 지우기 )
+		// 5. 레더타겟 클리어 ( 화면 지우기 )
 		// 6. present 함수로 렌더타겟에 있는 텍스쳐를
 		//    모니터에 그려준다.
 
@@ -147,20 +147,12 @@ namespace My::graphics
 	}
 	bool GraphicDevice_Dx11::CreateBuffer(ID3D11Buffer** buffer, D3D11_BUFFER_DESC* desc, D3D11_SUBRESOURCE_DATA* data)
 	{
-		//D3D11_BUFFER_DESC triangleDesc = {};
-		//triangleDesc.ByteWidth = desc->ByteWidth;
-		//triangleDesc.BindFlags = desc->BindFlags;
-		//triangleDesc.CPUAccessFlags = desc->CPUAccessFlags;
-
-
-		/*D3D11_SUBRESOURCE_DATA triangleData = {};
-		triangleData.pSysMem = vertexes;*/
-
 		if (FAILED(mDevice->CreateBuffer(desc, data, buffer)))
 			return false;
 
 		return true;
 	}
+
 	bool GraphicDevice_Dx11::CreateShader()
 	{
 		std::filesystem::path shaderPath
@@ -171,33 +163,33 @@ namespace My::graphics
 		vsPath += L"TriangleVS.hlsl";
 
 		D3DCompileFromFile(vsPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, "main", "vs_5_0", 0, 0, &My::renderer::triangleVSBlob, &My::renderer::errorBlob);
+			, "main", "vs_5_0", 0, 0, &renderer::triangleVSBlob, &renderer::errorBlob);
 
-		if (My::renderer::errorBlob)
+		if (renderer::errorBlob)
 		{
-			OutputDebugStringA((char*)My::renderer::errorBlob->GetBufferPointer());
-			My::renderer::errorBlob->Release();
+			OutputDebugStringA((char*)renderer::errorBlob->GetBufferPointer());
+			renderer::errorBlob->Release();
 		}
 
-		mDevice->CreateVertexShader(My::renderer::triangleVSBlob->GetBufferPointer()
-			, My::renderer::triangleVSBlob->GetBufferSize()
-			, nullptr, &My::renderer::triangleVSShader);
+		mDevice->CreateVertexShader(renderer::triangleVSBlob->GetBufferPointer()
+			, renderer::triangleVSBlob->GetBufferSize()
+			, nullptr, &renderer::triangleVSShader);
 
 		std::filesystem::path psPath(shaderPath.c_str());
 		psPath += L"TrianglePS.hlsl";
 
 		D3DCompileFromFile(psPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, "main", "ps_5_0", 0, 0, &My::renderer::trianglePSBlob, &My::renderer::errorBlob);
+			, "main", "ps_5_0", 0, 0, &renderer::trianglePSBlob, &renderer::errorBlob);
 
-		if (My::renderer::errorBlob)
+		if (renderer::errorBlob)
 		{
-			OutputDebugStringA((char*)My::renderer::errorBlob->GetBufferPointer());
-			My::renderer::errorBlob->Release();
+			OutputDebugStringA((char*)renderer::errorBlob->GetBufferPointer());
+			renderer::errorBlob->Release();
 		}
 
-		mDevice->CreatePixelShader(My::renderer::trianglePSBlob->GetBufferPointer()
-			, My::renderer::trianglePSBlob->GetBufferSize()
-			, nullptr, &My::renderer::trianglePSShader);
+		mDevice->CreatePixelShader(renderer::trianglePSBlob->GetBufferPointer()
+			, renderer::trianglePSBlob->GetBufferSize()
+			, nullptr, &renderer::trianglePSShader);
 
 
 		// Input layout 정점 구조 정보를 넘겨줘야한다.
@@ -257,6 +249,53 @@ namespace My::graphics
 		mContext->RSSetViewports(1, viewPort);
 	}
 
+	void GraphicDevice_Dx11::SetConstantBuffer(ID3D11Buffer* buffer, void* data, UINT size)
+	{
+		D3D11_MAPPED_SUBRESOURCE subRes = {};
+		mContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subRes);
+		memcpy(subRes.pData, data, size);
+		mContext->Unmap(buffer, 0);
+	}
+
+	void GraphicDevice_Dx11::BindConstantBuffer(eShaderStage stage, eCBType type, ID3D11Buffer* buffer)
+	{
+		switch (stage)
+		{
+		case eShaderStage::VS:
+			mContext->VSSetConstantBuffers((UINT)type, 1, &buffer);
+			break;
+		case eShaderStage::HS:
+			mContext->HSSetConstantBuffers((UINT)type, 1, &buffer);
+			break;
+		case eShaderStage::DS:
+			mContext->DSSetConstantBuffers((UINT)type, 1, &buffer);
+			break;
+		case eShaderStage::GS:
+			mContext->GSSetConstantBuffers((UINT)type, 1, &buffer);
+			break;
+		case eShaderStage::PS:
+			mContext->PSSetConstantBuffers((UINT)type, 1, &buffer);
+			break;
+		case eShaderStage::CS:
+			mContext->CSSetConstantBuffers((UINT)type, 1, &buffer);
+			break;
+		case eShaderStage::End:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void GraphicDevice_Dx11::BindsConstantBuffer(eShaderStage stage, eCBType type, ID3D11Buffer* buffer)
+	{
+		mContext->VSSetConstantBuffers((UINT)type, 1, &buffer);
+		mContext->HSSetConstantBuffers((UINT)type, 1, &buffer);
+		mContext->DSSetConstantBuffers((UINT)type, 1, &buffer);
+		mContext->GSSetConstantBuffers((UINT)type, 1, &buffer);
+		mContext->PSSetConstantBuffers((UINT)type, 1, &buffer);
+		mContext->CSSetConstantBuffers((UINT)type, 1, &buffer);
+	}
+
 	void GraphicDevice_Dx11::Draw()
 	{
 		// render target clear
@@ -284,16 +323,18 @@ namespace My::graphics
 		UINT offset = 0;
 
 		mContext->IASetVertexBuffers(0, 1, &renderer::triangleBuffer, &vertexsize, &offset);
+		mContext->IASetIndexBuffer(renderer::triangleIdxBuffer, DXGI_FORMAT_R32_UINT, 0);
+
 		mContext->IASetInputLayout(renderer::triangleLayout);
 		mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//Bind VS, PS 
-
 		mContext->VSSetShader(renderer::triangleVSShader, 0, 0);
 		mContext->PSSetShader(renderer::trianglePSShader, 0, 0);
 
 		// Draw Render Target
-		mContext->Draw(3, 0);
+		//mContext->Draw(3, 0);
+		mContext->DrawIndexed(3, 0, 0);
 
 		// 레더타겟에 있는 이미지를 화면에 그려준다
 		mSwapChain->Present(0, 0);
