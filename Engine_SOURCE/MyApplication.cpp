@@ -21,6 +21,7 @@ namespace My
 
 	void Application::Run()
 	{
+		int a = 0;
 		Update();
 		LateUpdate();
 		Render();
