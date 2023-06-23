@@ -1,27 +1,30 @@
 #pragma once
 #include "MyEngine.h"
 #include "MyGraphicDevice_Dx11.h"
+#include "MyMesh.h"
+#include "MyShader.h"
+#include "MyConstantBuffer.h"
 
 using namespace My::math;
+using namespace My::graphics;
 namespace renderer
 {
 	struct Vertex
 	{
 		Vector3 pos;
 		Vector4 color;
+		Vector2 uv;
+	};
+
+	CBUFFER(TransformCB, CBSLOT_TRANSFORM)
+	{
+		Matrix mWorld;
+		Matrix mView;
+		Matrix mProjection;
 	};
 
 	extern Vertex vertexes[];
-	extern ID3D11InputLayout* triangleLayout;
-	extern ID3D11Buffer* triangleBuffer;
-	extern ID3D11Buffer* triangleIdxBuffer;
-	extern ID3D11Buffer* triangleConstantBuffer;
-	extern ID3DBlob* errorBlob;
-	extern ID3DBlob* triangleVSBlob;
-	extern ID3D11VertexShader* triangleVSShader;
-	extern ID3DBlob* trianglePSBlob;
-	extern ID3D11PixelShader* trianglePSShader;
-
+	extern My::graphics::ConstantBuffer* constantBuffer[(UINT)eCBType::End];
 
 	void Initialize();
 	void Release();

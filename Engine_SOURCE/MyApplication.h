@@ -1,6 +1,7 @@
 #pragma once
 #include "MyEngine.h"
 #include "MyGraphicDevice_Dx11.h"
+#include "MyScene.h"
 
 namespace My
 {

@@ -5,6 +5,8 @@
 #include "Client.h"
 #include "MyApplication.h"
 #include "MyRenderer.h"
+#include "MyResources.h"
+#include "MySceneManager.h"
 
 My::Application application;
 
@@ -66,6 +68,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     renderer::Release();
+    My::SceneManager::Release();
+
     return (int)msg.wParam;
 }
 

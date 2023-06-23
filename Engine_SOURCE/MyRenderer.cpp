@@ -1,140 +1,164 @@
 #include "MyRenderer.h"
+#include "MyResources.h"
+#include "MyTexture.h"
+#include "MyMaterial.h"
 
 
 
 namespace renderer
 {
-	Vertex vertexes[3] = {};
-
-	// Input Layout (정점 정보)
-	ID3D11InputLayout* triangleLayout = nullptr;
-
-	// Vertex Buffer
-	ID3D11Buffer* triangleBuffer = nullptr;
-	ID3D11Buffer* triangleIdxBuffer = nullptr;
-	ID3D11Buffer* triangleConstantBuffer = nullptr;
-
-
-	// error blob
-	ID3DBlob* errorBlob = nullptr;
-
-	// Vertex Shader code -> Binary Code
-	ID3DBlob* triangleVSBlob = nullptr;
-
-	// Vertex Shader
-	ID3D11VertexShader* triangleVSShader = nullptr;
-
-	// Pixel Shader code -> Binary Code
-	ID3DBlob* trianglePSBlob = nullptr;
-
-	// Vertex Shader
-	ID3D11PixelShader* trianglePSShader = nullptr;
+	using namespace My;
+	using namespace My::graphics;
+	Vertex vertexes[4] = {};
+	My::graphics::ConstantBuffer* constantBuffer[(UINT)eCBType::End] = {};
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState[(UINT)eSamplerType::End] = {};
 
 	void SetupState()
 	{
+		// Input layout 정점 구조 정보를 넘겨줘야한다.
+		D3D11_INPUT_ELEMENT_DESC arrLayout[3] = {};
 
+		arrLayout[0].AlignedByteOffset = 0;
+		arrLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		arrLayout[0].InputSlot = 0;
+		arrLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		arrLayout[0].SemanticName = "POSITION";
+		arrLayout[0].SemanticIndex = 0;
 
+		arrLayout[1].AlignedByteOffset = 12;
+		arrLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		arrLayout[1].InputSlot = 0;
+		arrLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		arrLayout[1].SemanticName = "COLOR";
+		arrLayout[1].SemanticIndex = 0;
 
+		arrLayout[2].AlignedByteOffset = 28;
+		arrLayout[2].Format = DXGI_FORMAT_R32G32_FLOAT;
+		arrLayout[2].InputSlot = 0;
+		arrLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		arrLayout[2].SemanticName = "TEXCOORD";
+		arrLayout[2].SemanticIndex = 0;
 
+		std::shared_ptr<Shader> shader = My::Resources::Find<Shader>(L"TriangleShader");
+		My::graphics::GetDevice()->CreateInputLayout(arrLayout, 3
+			, shader->GetVSCode()
+			, shader->GetInputLayoutAddressOf());
+
+		shader = My::Resources::Find<Shader>(L"SpriteShader");
+		My::graphics::GetDevice()->CreateInputLayout(arrLayout, 3
+			, shader->GetVSCode()
+			, shader->GetInputLayoutAddressOf());
+
+		//Sampler State
+		D3D11_SAMPLER_DESC desc = {};
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		GetDevice()->CreateSampler(&desc, samplerState[(UINT)eSamplerType::Point].GetAddressOf());
+		GetDevice()->BindSampler(eShaderStage::PS, 0, samplerState[(UINT)eSamplerType::Point].GetAddressOf());
+
+		desc.Filter = D3D11_FILTER_ANISOTROPIC;
+		GetDevice()->CreateSampler(&desc, samplerState[(UINT)eSamplerType::Anisotropic].GetAddressOf());
+		GetDevice()->BindSampler(eShaderStage::PS, 1, samplerState[(UINT)eSamplerType::Anisotropic].GetAddressOf());
 	}
 
 	void LoadBuffer()
 	{
-
 		// Vertex Buffer
-		D3D11_BUFFER_DESC triangleDesc = {};
-		triangleDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-		triangleDesc.ByteWidth = sizeof(Vertex) * 3;
-		triangleDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-		triangleDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+		Resources::Insert(L"RectMesh", mesh);
 
-		D3D11_SUBRESOURCE_DATA triangleData = {};
-		triangleData.pSysMem = vertexes;
-		My::graphics::GetDevice()->CreateBuffer(&triangleBuffer, &triangleDesc, &triangleData);
+		mesh->CreateVertexBuffer(vertexes, 4);
 
 		std::vector<UINT> indexes = {};
 		indexes.push_back(0);
 		indexes.push_back(1);
 		indexes.push_back(2);
 
-
-		// Index Buffer
-		D3D11_BUFFER_DESC triangleIdxDesc = {};
-		triangleIdxDesc.ByteWidth = sizeof(UINT) * indexes.size();
-		triangleIdxDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
-		triangleIdxDesc.Usage = D3D11_USAGE_DEFAULT;
-		triangleIdxDesc.CPUAccessFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA triangleIdxData = {};
-		triangleIdxData.pSysMem = indexes.data();
-		My::graphics::GetDevice()->CreateBuffer(&triangleIdxBuffer, &triangleIdxDesc, &triangleIdxData);
+		indexes.push_back(0);
+		indexes.push_back(2);
+		indexes.push_back(3);
+		mesh->CreateIndexBuffer(indexes.data(), indexes.size());
 
 		// Constant Buffer
-		D3D11_BUFFER_DESC triangleCSDesc = {};
-		triangleCSDesc.ByteWidth = sizeof(Vector4);
-		triangleCSDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
-		triangleCSDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-		triangleCSDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-		My::graphics::GetDevice()->CreateBuffer(&triangleConstantBuffer, &triangleCSDesc, nullptr);
-
-		Vector4 pos(0.3f, 0.0f, 0.0f, 1.0f);
-		My::graphics::GetDevice()->SetConstantBuffer(triangleConstantBuffer, &pos, sizeof(Vector4));
-		My::graphics::GetDevice()->BindConstantBuffer(eShaderStage::VS, eCBType::Transform, triangleConstantBuffer);
-		//
+		constantBuffer[(UINT)eCBType::Transform] = new ConstantBuffer(eCBType::Transform);
+		constantBuffer[(UINT)eCBType::Transform]->Create(sizeof(TransformCB));
 	}
 
 	void LoadShader()
 	{
-		My::graphics::GetDevice()->CreateShader();
+		std::shared_ptr<Shader> shader = std::make_shared<Shader>();
+		shader->Create(eShaderStage::VS, L"TriangleVS.hlsl", "main");
+		shader->Create(eShaderStage::PS, L"TrianglePS.hlsl", "main");
+		My::Resources::Insert(L"TriangleShader", shader);
+
+		std::shared_ptr<Shader> spriteShader = std::make_shared<Shader>();
+		spriteShader->Create(eShaderStage::VS, L"SpriteVS.hlsl", "main");
+		spriteShader->Create(eShaderStage::PS, L"SpritePS.hlsl", "main");
+		My::Resources::Insert(L"SpriteShader", spriteShader);
+
+		{
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"Link", L"..\\Resources\\Texture\\Link.png");
+
+			std::shared_ptr<Material> spriteMateiral = std::make_shared<Material>();
+			spriteMateiral->SetShader(spriteShader);
+			spriteMateiral->SetTexture(texture);
+			Resources::Insert(L"SpriteMaterial", spriteMateiral);
+		}
+
+		{
+			std::shared_ptr<Texture> texture
+				= Resources::Load<Texture>(L"Smile", L"..\\Resources\\Texture\\Smile.png");
+			std::shared_ptr<Material> spriteMateiral = std::make_shared<Material>();
+			spriteMateiral->SetShader(spriteShader);
+			spriteMateiral->SetTexture(texture);
+			Resources::Insert(L"SpriteMaterial02", spriteMateiral);
+		}
 	}
 
 	void Initialize()
 	{
-		vertexes[0].pos = Vector3(0.0f, 0.5f, 0.0f);
+		vertexes[0].pos = Vector3(-0.5f, 0.5f, 0.0f);
 		vertexes[0].color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+		vertexes[0].uv = Vector2(0.0f, 0.0f);
 
-		vertexes[1].pos = Vector3(0.5f, -0.5f, 0.0f);
+		vertexes[1].pos = Vector3(0.5f, 0.5f, 0.0f);
 		vertexes[1].color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+		vertexes[1].uv = Vector2(1.0f, 0.0f);
 
-		vertexes[2].pos = Vector3(-0.5f, -0.5f, 0.0f);
+		vertexes[2].pos = Vector3(0.5f, -0.5f, 0.0f);
 		vertexes[2].color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		vertexes[2].uv = Vector2(1.0f, 1.0f);
 
-		SetupState();
+		vertexes[3].pos = Vector3(-0.5f, -0.5f, 0.0f);
+		vertexes[3].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		vertexes[3].uv = Vector2(0.0f, 1.0f);
+
 		LoadBuffer();
 		LoadShader();
+		SetupState();
+
+		std::shared_ptr<Texture> texture
+			= Resources::Load<Texture>(L"Smile", L"..\\Resources\\Texture\\Smile.png");
+		texture
+			= Resources::Load<Texture>(L"Link", L"..\\Resources\\Texture\\Link.png");
+
+		texture->BindShader(eShaderStage::PS, 0);
 	}
 
 	void Release()
 	{
-		if (triangleLayout != nullptr)
-			triangleLayout->Release();
+		for (ConstantBuffer* buff : constantBuffer)
+		{
+			if (buff == nullptr)
+				continue;
 
-		if (triangleBuffer != nullptr)
-			triangleBuffer->Release();
-
-		if (triangleIdxBuffer != nullptr)
-			triangleIdxBuffer->Release();
-
-		if (triangleConstantBuffer != nullptr)
-			triangleConstantBuffer->Release();
-
-		if (errorBlob != nullptr)
-			errorBlob->Release();
-
-		if (triangleVSBlob != nullptr)
-			triangleVSBlob->Release();
-
-		if (triangleVSShader != nullptr)
-			triangleVSShader->Release();
-
-		if (trianglePSBlob != nullptr)
-			trianglePSBlob->Release();
-
-		if (trianglePSShader != nullptr)
-			trianglePSShader->Release();
+			delete buff;
+			buff = nullptr;
+		}
 	}
 }
-
 
 

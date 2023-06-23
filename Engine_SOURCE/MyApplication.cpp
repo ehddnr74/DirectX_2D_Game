@@ -2,7 +2,7 @@
 #include "MyInput.h"
 #include "MyTime.h"
 #include "MyRenderer.h"
-
+#include "MySceneManager.h"
 
 namespace My
 {
@@ -21,7 +21,6 @@ namespace My
 
 	void Application::Run()
 	{
-		int a = 0;
 		Update();
 		LateUpdate();
 		Render();
@@ -33,16 +32,19 @@ namespace My
 		Input::Initialize();
 
 		renderer::Initialize();
+		SceneManager::Initialize();
 	}
 
 	void Application::Update()
 	{
 		Time::Update();
 		Input::Update();
+		SceneManager::Update();
 	}
 
 	void Application::LateUpdate()
 	{
+		SceneManager::LateUpdate();
 	}
 
 	void Application::Render()
@@ -50,6 +52,10 @@ namespace My
 		Time::Render();
 
 		graphicDevice->Draw();
+		graphicDevice->UpdateViewPort();
+		SceneManager::Render();
+
+		graphicDevice->Present();
 	}
 
 	void Application::SetWindow(HWND hwnd, UINT width, UINT height)
