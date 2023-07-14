@@ -17,6 +17,7 @@ namespace My
 
 	Application::~Application()
 	{
+
 	}
 
 	void Application::Run()
@@ -24,6 +25,7 @@ namespace My
 		Update();
 		LateUpdate();
 		Render();
+		Destroy();
 	}
 
 	void Application::Initialize()
@@ -51,10 +53,23 @@ namespace My
 	{
 		Time::Render();
 
-		graphicDevice->Draw();
+		graphicDevice->ClearTarget();
 		graphicDevice->UpdateViewPort();
-		SceneManager::Render();
 
+		//SceneManager::Render();
+		renderer::Render();
+		//graphicDevice->Draw();
+
+
+	}
+
+	void Application::Destroy()
+	{
+		SceneManager::Destroy();
+	}
+
+	void Application::Present()
+	{
 		graphicDevice->Present();
 	}
 

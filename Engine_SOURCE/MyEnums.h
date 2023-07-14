@@ -8,6 +8,7 @@ namespace My::enums
 		None,
 		Transform,
 		Mesh,
+		Collider2D,
 		Particle,
 		MeshRenderer,
 		Script,
@@ -17,10 +18,11 @@ namespace My::enums
 
 	enum class eLayerType
 	{
+		Grid,
 		Player,
 		Monster,
 		UI,
-		End,
+		End = 16,
 	};
 
 	enum class eResourceType
@@ -29,6 +31,15 @@ namespace My::enums
 		Shader,
 		Material,
 		Mesh,
+		End,
+	};
+
+	enum class eColliderType
+	{
+		Rect,
+		Circle,
+		Sphere,
+		Cube,
 		End,
 	};
 }

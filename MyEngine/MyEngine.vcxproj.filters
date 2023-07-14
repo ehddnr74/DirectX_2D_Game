@@ -2,8 +2,43 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="..\Engine_SOURCE\MyPlayScene.h">
+      <Filter>Contents\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine_SOURCE\MyCameraScript.h">
+      <Filter>Contents\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScenes.h">
+      <Filter>Contents\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine_SOURCE\MyGridScript.h">
+      <Filter>Contents\Script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyEngine.cpp" />
+    <ClCompile Include="..\Engine_SOURCE\MyPlayScene.cpp">
+      <Filter>Contents\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine_SOURCE\MyCameraScript.cpp">
+      <Filter>Contents\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine_SOURCE\MyGridScript.cpp">
+      <Filter>Contents\Script</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Contents">
+      <UniqueIdentifier>{af125c61-6183-4683-b5f9-08d98b27e093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Load">
+      <UniqueIdentifier>{2b96d9ca-aff3-4839-8c93-b990e0cebb26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Scene">
+      <UniqueIdentifier>{61f942c4-d9d2-4079-96de-f8e687d731d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents\Script">
+      <UniqueIdentifier>{e57c603e-8a1a-4f06-aa5c-716cae864f6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

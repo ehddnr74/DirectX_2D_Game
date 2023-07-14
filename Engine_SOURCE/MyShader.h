@@ -22,16 +22,19 @@ namespace My
 		{
 			return mVSBlob.Get();
 		}
-
 		ID3D11InputLayout* GetInputLayout()
 		{
 			return mInputLayout;
 		}
-
 		ID3D11InputLayout** GetInputLayoutAddressOf()
 		{
 			return &mInputLayout;
 		}
+
+		void SetRSState(eRSType type) { mRSType = type; }
+		void SetDSState(eDSType type) { mDSType = type; }
+		void SetBSState(eBSType type) { mBSType = type; }
+		void SetTopology(D3D11_PRIMITIVE_TOPOLOGY topology) { mTopology = topology; }
 
 	private:
 		ID3D11InputLayout* mInputLayout;
@@ -48,5 +51,9 @@ namespace My
 		Microsoft::WRL::ComPtr<ID3D11DomainShader> mDS;
 		Microsoft::WRL::ComPtr<ID3D11GeometryShader> mGS;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> mPS;
+
+		eRSType mRSType;
+		eDSType mDSType;
+		eBSType mBSType;
 	};
 }

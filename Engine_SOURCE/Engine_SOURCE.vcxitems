@@ -17,7 +17,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Commoninclude.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyApplication.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyCamera.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MyCameraScript.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyCollider2D.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyCollisionManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyConstantBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyEngine.h" />
@@ -32,7 +33,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MyMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyMesh.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyMeshRenderer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MyPlayScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyResource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MyResources.h" />
@@ -47,7 +48,8 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)MyApplication.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyCamera.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)MyCameraScript.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MyCollider2D.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MyCollisionManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyConstantBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyEntity.cpp" />
@@ -59,7 +61,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)MyMath.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyMesh.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyMeshRenderer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)MyPlayScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyResource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MyResources.cpp" />

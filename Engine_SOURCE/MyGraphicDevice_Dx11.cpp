@@ -78,7 +78,7 @@ namespace My::graphics
 		dxgiDesc.OutputWindow = hWnd;
 		dxgiDesc.Windowed = true;
 		dxgiDesc.BufferCount = desc->BufferCount;
-		dxgiDesc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
+		dxgiDesc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
 		dxgiDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		dxgiDesc.BufferDesc.Width = desc->BufferDesc.Width;
@@ -195,7 +195,7 @@ namespace My::graphics
 		return true;
 	}
 
-	bool GraphicDevice_Dx11::CreateSampler(const D3D11_SAMPLER_DESC* pSamplerDesc, ID3D11SamplerState** ppSamplerState)
+	bool GraphicDevice_Dx11::CreateSamplerState(const D3D11_SAMPLER_DESC* pSamplerDesc, ID3D11SamplerState** ppSamplerState)
 	{
 		if (FAILED(mDevice->CreateSamplerState(pSamplerDesc, ppSamplerState)))
 			return false;
@@ -203,38 +203,51 @@ namespace My::graphics
 		return true;
 	}
 
-	void GraphicDevice_Dx11::BindSampler(eShaderStage stage, UINT StartSlot, ID3D11SamplerState** ppSamplers)
+	bool GraphicDevice_Dx11::CreateRasterizeState(const D3D11_RASTERIZER_DESC* pRasterizerDesc
+		, ID3D11RasterizerState** ppRasterizerState)
 	{
-		switch (stage)
-		{
-		case eShaderStage::VS:
-			mContext->VSSetSamplers(StartSlot, 1, ppSamplers);
-			break;
-		case eShaderStage::HS:
-			mContext->HSSetSamplers(StartSlot, 1, ppSamplers);
-			break;
-		case eShaderStage::DS:
-			mContext->DSSetSamplers(StartSlot, 1, ppSamplers);
-			break;
-		case eShaderStage::GS:
-			mContext->GSSetSamplers(StartSlot, 1, ppSamplers);
-			break;
-		case eShaderStage::PS:
-			mContext->PSSetSamplers(StartSlot, 1, ppSamplers);
-			break;
-		case eShaderStage::CS:
-			mContext->CSSetSamplers(StartSlot, 1, ppSamplers);
-			break;
-		case eShaderStage::End:
-			break;
-		default:
-			break;
-		}
+		if (FAILED(mDevice->CreateRasterizerState(pRasterizerDesc, ppRasterizerState)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicDevice_Dx11::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* pDepthStencilDesc
+		, ID3D11DepthStencilState** ppDepthStencilState)
+	{
+		if (FAILED(mDevice->CreateDepthStencilState(pDepthStencilDesc, ppDepthStencilState)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicDevice_Dx11::CreateBlendState(const D3D11_BLEND_DESC* pBlendStateDesc
+		, ID3D11BlendState** ppBlendState)
+	{
+		if (FAILED(mDevice->CreateBlendState(pBlendStateDesc, ppBlendState)))
+			return false;
+
+		return true;
 	}
 
 	void GraphicDevice_Dx11::BindViewPort(D3D11_VIEWPORT* viewPort)
 	{
 		mContext->RSSetViewports(1, viewPort);
+	}
+
+	void GraphicDevice_Dx11::BindRasterizeState(ID3D11RasterizerState* pRasterizerState)
+	{
+		mContext->RSSetState(pRasterizerState);
+	}
+
+	void GraphicDevice_Dx11::BindDepthStencilState(ID3D11DepthStencilState* pDepthStencilState)
+	{
+		mContext->OMSetDepthStencilState(pDepthStencilState, 0);
+	}
+
+	void GraphicDevice_Dx11::BindBlendState(ID3D11BlendState* pBlendState)
+	{
+		mContext->OMSetBlendState(pBlendState, nullptr, 0xffffffff);
 	}
 
 	void GraphicDevice_Dx11::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
@@ -354,6 +367,35 @@ namespace My::graphics
 		}
 	}
 
+	void GraphicDevice_Dx11::BindSampler(eShaderStage stage, UINT StartSlot, ID3D11SamplerState** ppSamplers)
+	{
+		switch (stage)
+		{
+		case eShaderStage::VS:
+			mContext->VSSetSamplers(StartSlot, 1, ppSamplers);
+			break;
+		case eShaderStage::HS:
+			mContext->HSSetSamplers(StartSlot, 1, ppSamplers);
+			break;
+		case eShaderStage::DS:
+			mContext->DSSetSamplers(StartSlot, 1, ppSamplers);
+			break;
+		case eShaderStage::GS:
+			mContext->GSSetSamplers(StartSlot, 1, ppSamplers);
+			break;
+		case eShaderStage::PS:
+			mContext->PSSetSamplers(StartSlot, 1, ppSamplers);
+			break;
+		case eShaderStage::CS:
+			mContext->CSSetSamplers(StartSlot, 1, ppSamplers);
+			break;
+		case eShaderStage::End:
+			break;
+		default:
+			break;
+		}
+	}
+
 	void GraphicDevice_Dx11::ClearTarget()
 	{
 		// render target clear
@@ -378,23 +420,9 @@ namespace My::graphics
 		};
 
 		BindViewPort(&mViewPort);
-	
-			mContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), mDepthStencilView.Get());
-
-		//renderer::mesh->BindBuffer();
-		//renderer::shader->Binds();
-		//mContext->DrawIndexed(renderer::mesh->GetIndexCount(), 0, 0);
-		
-			mContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), mDepthStencilView.Get());
-
-		//renderer::mesh->BindBuffer();
-		//renderer::shader->Binds();
-		//mContext->DrawIndexed(renderer::mesh->GetIndexCount(), 0, 0);
-		
 	}
-	
 
-		void GraphicDevice_Dx11::Draw()
+	void GraphicDevice_Dx11::Draw()
 	{
 
 	}

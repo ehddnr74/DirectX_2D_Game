@@ -2,7 +2,7 @@
 #include "MyResource.h"
 #include "MyShader.h"
 #include "MyTexture.h"
-		  
+
 namespace My::graphics
 {
 	class Material : public Resource
@@ -18,9 +18,14 @@ namespace My::graphics
 
 		void SetShader(std::shared_ptr<Shader> shader) { mShader = shader; }
 		void SetTexture(std::shared_ptr<Texture> texture) { mTexture = texture; }
+		void SetRenderingMode(eRenderingMode mode) { mMode = mode; }
+		eRenderingMode GetRenderingMode() { return mMode; }
+
 
 	private:
 		std::shared_ptr<Shader> mShader;
 		std::shared_ptr<Texture> mTexture;
+
+		eRenderingMode mMode;
 	};
 }

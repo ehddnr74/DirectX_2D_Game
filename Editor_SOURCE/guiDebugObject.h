@@ -1,14 +1,14 @@
 #pragma once
-//#include "yaScene.h"
-#include "..\Engine_SOURCE\MyScene.h"
+#include "..\\Engine_SOURCE\\MyGameObject.h"
 
-namespace My
+
+namespace gui
 {
-	class PlayScene : public Scene
+	class DebugObject : public My::GameObject
 	{
 	public:
-		PlayScene();
-		virtual ~PlayScene();
+		DebugObject();
+		~DebugObject();
 
 		virtual void Initialize() override;
 		virtual void Update() override;
@@ -16,6 +16,5 @@ namespace My
 		virtual void Render() override;
 
 	private:
-
 	};
 }

@@ -3,10 +3,18 @@
 
 #include "framework.h"
 #include "Client.h"
-#include "MyApplication.h"
-#include "MyRenderer.h"
-#include "MyResources.h"
-#include "MySceneManager.h"
+
+#include "..\Engine_SOURCE\MyApplication.h"
+#include "..\Engine_SOURCE\MyRenderer.h"
+#include "..\Engine_SOURCE\MyResources.h"
+#include "LoadScenes.h"
+#include "guiEditor.h"
+
+#ifdef _DEBUG
+#pragma comment(lib, "..\\x64\\Debug\\MyEngine.lib")
+#else
+#pragma comment(lib, "..\\x64\\Release\\MyEngine.lib")
+#endif
 
 My::Application application;
 
@@ -64,11 +72,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
             // 여기서 게임 로직이 돌아가야한다.
             application.Run();
+            gui::Editor::Run();
+            application.Present();
         }
     }
 
     renderer::Release();
     My::SceneManager::Release();
+    gui::Editor::Release();
 
     return (int)msg.wParam;
 }
@@ -128,6 +139,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     UpdateWindow(hWnd);
 
     application.Initialize();
+    My::InitializeScenes();
+    gui::Editor::Initialize();
 
     return TRUE;
 }

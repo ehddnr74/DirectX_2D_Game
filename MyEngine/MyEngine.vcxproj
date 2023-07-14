@@ -150,9 +150,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Engine_SOURCE\MyCameraScript.h" />
+    <ClInclude Include="..\Engine_SOURCE\MyGridScript.h" />
+    <ClInclude Include="..\Engine_SOURCE\MyPlayScene.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="LoadScenes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Engine_SOURCE\MyCameraScript.cpp" />
+    <ClCompile Include="..\Engine_SOURCE\MyGridScript.cpp" />
+    <ClCompile Include="..\Engine_SOURCE\MyPlayScene.cpp" />
     <ClCompile Include="MyEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
